@@ -1,0 +1,174 @@
+\documentclass[12pt]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usetheme{default}
+\usetheme{bars}
+\usetheme{Madrid}
+\usepackage{multicol}
+\usepackage[absolute,overlay]{textpos}
+\usepackage{xcolor,colortbl,color}
+\usepackage{graphicx,graphics,epsf,rotate,wrapfig}
+\usepackage{pgf,pgfarrows,pgfnodes,pgfautomata,pgfheaps, pgfpages}
+\usepackage{latexsym,amssymb,amsmath,hyperref, longtable,mathrsfs,euscript}
+\usepackage{color}
+\usepackage{wrapfig}
+
+\usepackage{etoolbox}
+
+
+\setbeamertemplate{theorems}[numbered] 
+\newtheorem{remark}{Remark} %for remark 
+
+\renewcommand\thetheorem{\arabic{lecture}.\arabic{theorem}}
+\renewcommand\theremark{\arabic{lecture}.\arabic{remark}}
+\makeatletter
+\@addtoreset{theorem}{lecture}
+\@addtoreset{remark}{lecture}
+
+%\AtBeginEnvironment{align}{\setcounter{equation}{0}}
+
+%\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\esssup}{ess\,sup}
+
+
+%\theoremstyle{plain}
+%\newtheorem{theorem}{Theorem}[section]
+%\newtheorem{lemma}[theorem]{Lemma}
+%\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{criterion}[theorem]{Criterion}
+\newtheorem{algorithm}[theorem]{Algorithm}
+
+\theoremstyle{definition}
+%\newtheorem{definition}[theorem]{Definition}
+\newtheorem{condition}[theorem]{Condition}
+%\newtheorem{problem}[theorem]{Problem}
+%\newtheorem{example}[theorem]{Example}
+\newtheorem{assumption}[theorem]{Assumption}
+\theoremstyle{remark}
+%\newtheorem{remark}[theorem]{Remark}
+%\newtheorem{note}[theorem]{Note}
+\newtheorem{notation}[theorem]{Notation}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{summary}[theorem]{Summary}
+\newtheorem{acknowledgment}[theorem]{Acknowledgment}
+\newtheorem{case}[theorem]{Case}
+\newtheorem{conclusion}[theorem]{Conclusion}
+%%%%%Some shortcuts for sets%%%%%
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\p}{\partial}
+\newcommand{\A}{\mathcal{A}}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\B}{\mathcal{B}}
+\newcommand{\M}{\mathcal{M}}
+\newcommand{\C}{\mathcal{C}}
+
+
+\newcommand{\bld}{\boldsymbol}
+\newcommand{\bu}{\boldsymbol{u}}
+\newcommand{\bx}{\boldsymbol{x}}
+\newcommand{\bv}{\boldsymbol{v}}
+\newcommand{\bw}{\boldsymbol{w}}
+\newcommand{\bphi}{\boldsymbol{\varphi}}
+\newcommand{\bF}{\boldsymbol{F}}
+\newcommand{\bg}{\boldsymbol{g}}
+\newcommand{\bPhi}{\boldsymbol{\phi}}
+\newcommand{\bpsi}{\boldsymbol{\psi}}
+%\newcommand{\nabla}{\boldsymbol{\nabla}}
+\newcommand{\ltwo}[1]{{L^2\left(#1\right)}}
+\newcommand{\lfour}[1]{{L^4\left(#1\right)}}
+\newcommand{\linf}[1]{{L^\infty\left(#1\right)}}
+\newcommand{\hdot}[1]{{\dot H^1\left(#1\right)}}
+\newcommand{\hdotzig}[1]{{\dot H^1_{0,\sigma}\left(#1\right)}}
+\newcommand{\hdotz}[1]{{\dot H^1_0\left(#1\right)}}
+\newcommand{\upper}{{\R^2_+}}
+\newcommand{\balln}{{B^+_n}}
+\newcommand{\ballm}{{B^+_m}}
+\newcommand{\com}[1]{{C^\infty_c\left(#1\right)}}
+\newcommand{\comsig}[1]{{C^\infty_{c,\sigma}\left(#1\right)}}
+
+\usepackage{subfigure}
+%\usepackage{enumitem}
+\newcounter{nameOfYourChoice}
+\def\Xint#1{\mathchoice
+	{\XXint\displaystyle\textstyle{#1}}%
+	{\XXint\textstyle\scriptstyle{#1}}%
+	{\XXint\scriptstyle\scriptscriptstyle{#1}}%
+	{\XXint\scriptscriptstyle\scriptscriptstyle{#1}}%
+	\!\int}
+\def\XXint#1#2#3{{\setbox0=\hbox{$#1{#2#3}{\int}$ }
+		\vcenter{\hbox{$#2#3$ }}\kern-.6\wd0}}
+\def\ddashint{\Xint=}
+\def\dashint{\Xint-}
+
+\newcommand{\dist}{{\rm dist }}
+\newcommand{\usub}{\underline{u}}
+\newcommand{\usup}{\overline{u}}
+\newcommand{\vsub}{\underline{v}}
+\newcommand{\vsup}{\overline{v}}
+\newcommand{\wsub}{\underline{w}}
+\newcommand{\wsup}{\overline{w}}
+\newcommand{\ds}{\displaystyle}
+\newcommand{\eps}{\varepsilon}
+
+\numberwithin{equation}{section}
+\newcommand{\Sect}[1]{\setcounter{equation}{0}\section{#1}\quad}
+\newcommand{\dint}{\displaystyle \int}
+\newcommand{\tu}{{\tilde u}}
+\newcommand{\tw}{{\tilde w}}
+%\newcommand{\R}{\mathbb{R}}
+
+\newcommand{\Qed}{\hfill $ \quad \Box $\par\bigskip}
+
+
+
+
+\newtheorem{Remark}{\bf Remark}[section]
+
+
+\newtheorem{Proposition}[theorem]{Proposition}
+
+\newcommand*{\theorembreak}{\usebeamertemplate{theorem end}\framebreak\usebeamertemplate{theorem begin}}
+\usepackage{lipsum}
+\usefonttheme{professionalfonts}
+\author[nle12@vols.utk.edu]{Van Le }
+\institute[UTK] % (optional)
+{
+	%
+		Department of Mathematics\\
+	The University of Tennessee, Knoxville\\
+
+}
+%\date{May 5, 2023}
+
+\begin{document}
+	%\author{Le Nguyen Thuy Van}
+	\title[Introduction to machine learning]{Introduction to machine learning and an example on data analysis using Scikit-learn package}
+	%\subtitle{}
+	%\logo{}
+	%\institute{}
+	%\date{}
+	%\subject{}
+	%\setbeamercovered{transparent}
+	%\setbeamertemplate{navigation symbols}{}
+	\frame{\titlepage}
+	%\frame
+	%{
+		%	\begin{multicols}{1}
+			%		\tableofcontents
+			%	\end{multicols}
+		%}
+	\frame
+	{
+		%	\begin{multicols}{1}
+			\tableofcontents
+			%	\end{multicols}
+	}
+
+\frame{\frametitle{}}
+
+\end{document}

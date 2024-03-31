@@ -1,0 +1,173 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage{color,fancyhdr,ifthen,amssymb,amsfonts,amsmath,graphicx,amsthm}
+\usepackage[english]{babel}
+\usepackage{setspace}
+\setstretch{1.25}
+\usepackage{tikz}
+\usepackage{ragged2e}
+\usepackage{blindtext}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{remark}{Remark}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{example}{Example}[subsection]
+\newtheorem{ex}{Exercise}
+\newtheorem{question}{Question}
+\numberwithin{question}{subsection}
+
+\newtheorem{proposition}{Proposition}[section]
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\D}{\mathbb{D}}
+\newcommand{\p}{\partial}
+\newcommand{\A}{\mathcal{A}}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\B}{\mathcal{B}}
+\newcommand{\M}{\mathcal{M}}
+
+\def\Xint#1{\mathchoice
+	{\XXint\displaystyle\textstyle{#1}}%
+	{\XXint\textstyle\scriptstyle{#1}}%
+	{\XXint\scriptstyle\scriptscriptstyle{#1}}%
+	{\XXint\scriptscriptstyle\scriptscriptstyle{#1}}%
+	\!\int}
+\def\XXint#1#2#3{{\setbox0=\hbox{$#1{#2#3}{\int}$ }
+		\vcenter{\hbox{$#2#3$ }}\kern-.6\wd0}}
+\def\ddashint{\Xint=}
+\def\dashint{\Xint-}
+
+%%SQUARECASESA%%%
+\DeclareMathOperator{\rank}{rank}
+\makeatletter
+\newenvironment{sqcases}{%
+	\matrix@check\sqcases\env@sqcases
+}{%
+	\endarray\right.%
+}
+\def\env@sqcases{%
+	\let\@ifnextchar\new@ifnextchar
+	\left\lbrack
+	\def\arraystretch{1.2}%
+	\array{@{}l@{\quad}l@{}}%
+}
+\makeatother
+
+\pagestyle{fancy}
+\setlength{\topmargin}{-.5in}
+\setlength{\textheight}{9in}
+\setlength{\oddsidemargin}{0in}
+\setlength{\evensidemargin}{0in}
+\setlength{\textwidth}{6.5in}
+\setlength{\headwidth}{\textwidth}
+\parindent=0in
+\newcounter{questionNumber}
+\setcounter{questionNumber}{1}
+\newcommand{\headandfoot}[3]{\lhead{#1}\chead{#2}\rhead{\ifthenelse{\isodd{\thepage}}{ {\hspace{.25in}}}{}}
+	\lfoot{ }\cfoot{\thepage}\rfoot{#3}}
+\linespread{1.5}
+%\newcommand{\question}[6]{\noindent\thequestionNumber.\quad %#1\\[.1in]
+	%(a) #2 \\
+	%(b) #3 \\
+	%(c) #4 \\
+	%(d) #5 \\
+	%(e) #6
+	\vspace{.25in}\addtocounter{questionNumber}{1}
+	\headandfoot{Machine learning notes}{}{}
+
+
+\begin{document}
+\section{NOTES ON MACHINE LEARNING}
+
+\subsection{Approaching a data set}
+
+Here are some main steps to approach a problem.
+\begin{itemize}
+	\item Look at the big picture. 
+	\begin{itemize}
+		\item Identify the objectives/goals.
+		
+		\item Select a performance measure.
+		
+		\item Check the assumptions to identify the task. Classification or regression.
+	\end{itemize} 
+	\item Get the data.
+	
+	\begin{itemize}
+		\item Download the data.
+		
+			\item Quick look at the data structure.
+		
+		\item Create a test set.
+	\end{itemize}
+	
+	\item Explore and visualize the data to gain insights.
+	
+	\begin{itemize}
+	\item  Look for correlations.
+	
+	\item   Experiment with Attribute Combinations.
+	\end{itemize}
+	
+	\item Prepare the data for machine learning algorithms.
+	
+	\begin{itemize}
+		\item Clean the data.
+		
+		\item Handling Text and Categorical Attributes.
+		
+		\item  Feature Scaling and Transformation.
+		
+		\item  Custom Transformers.
+		
+		\item  Transformation Pipelines.
+	\end{itemize}
+	 \item Select a model and train it.
+	 \begin{itemize}
+	 	\item  Train and Evaluate on the Training Set
+	 	
+	 	\item   Better Evaluation Using Cross-Validation
+	 \end{itemize}
+	\item Fine-tune your model.
+	\begin{itemize}
+		\item Grid search.
+		
+		\item  Randomized Search.
+		
+		\item Ensemble Methods.
+		
+		\item Analyzing the Best Models and Their Errors.
+		
+		\item Evaluate Your System on the Test Set.
+	\end{itemize}
+	\item Present your solution.
+	
+	\item Launch, monitor, and maintain your system.
+	
+	
+\end{itemize}
+	
+	
+	
+	\section{Projects }
+
+\subsection{Strokes prediction}
+\subsubsection{Big picture}
+
+\begin{itemize}
+	\item Objectives/goals
+	
+	I want to predict whether a patient is likely to get stroke based on the input parameters like gender, age, various diseases, and smoking status. 
+	
+	\item  Select a performance measure.
+	
+		\item Check the assumptions to identify the task. Classification or regression.
+	
+	For practicing purpose, I will try to use both regression and classification.
+\end{itemize}
+	
+\end{document}
