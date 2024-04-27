@@ -1,4 +1,4 @@
-\documentclass[12pt]{beamer}
+\documentclass[10pt]{beamer}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usetheme{default}
@@ -13,7 +13,42 @@
 \usepackage{color}
 \usepackage{wrapfig}
 
-\usepackage{etoolbox}
+\usepackage{xcolor}
+
+
+
+\usepackage{listings}
+\usepackage{xcolor}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+	language=Python,
+	backgroundcolor=\color{backcolour},   
+	commentstyle=\color{codegreen},
+	keywordstyle=\color{magenta},
+	numberstyle=\tiny\color{codegray},
+	stringstyle=\color{codepurple},
+	basicstyle=\ttfamily\footnotesize,
+	breakatwhitespace=false,         
+	breaklines=true,                 
+	captionpos=b,                    
+	keepspaces=true,                 
+	numbers=left,                    
+	numbersep=5pt,                  
+	showspaces=false,                
+	showstringspaces=false,
+	showtabs=false,                  
+	tabsize=2
+}
+
+
+\lstset{style=mystyle}
+
+
 
 
 \setbeamertemplate{theorems}[numbered] 
@@ -147,7 +182,7 @@
 
 \begin{document}
 	%\author{Le Nguyen Thuy Van}
-	\title[Introduction to machine learning]{Introduction to machine learning and an example on data analysis using Scikit-learn package}
+	\title[Introduction to machine learning]{An example on data analysis using Scikit-learn package}
 	%\subtitle{}
 	%\logo{}
 	%\institute{}
@@ -169,6 +204,340 @@
 			%	\end{multicols}
 	}
 
-\frame{\frametitle{}}
+
+\section{Main goal}
+\frame{\frametitle{Main goal}
+\begin{itemize}
+	\item Learn to use Scikit-Learn.
+	
+	\item Predict whether a patient is likely to get a stroke based on inputs such as gender, age, various diseases and smoking status.
+	
+	\end{itemize}
+}
+
+\section{Explore and visualize the data go gain insights}
+\begin{frame}
+	\centering Explore and visualize the data go gain insights
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Downloading data}
+\begin{lstlisting}
+	stroke_data = pd.read_csv(Path("healthcare-dataset-stroke-data.csv")) 
+	stroke_data.head(10)
+\end{lstlisting}
+
+\begin{figure}[h]
+	\caption{Stroke prediction dataset}
+	\centering
+	\includegraphics[width=1.0\textwidth]{head.png}
+\end{figure}
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\begin{lstlisting}
+	stroke_data.info()
+\end{lstlisting}
+	
+	\begin{figure}[h]
+		\caption{Stroke prediction dataset's information}
+		\centering
+		\includegraphics[width=0.8\textwidth]{info.png}
+	\end{figure}
+	
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+	\frametitle{A quick look at categorical attributes}
+\begin{lstlisting}
+stroke_data["NAME_OF_COLS"].value_counts(ascending = True)
+
+>>>gender
+Other        1
+Male      2115
+Female    2994
+Name: count, dtype: int64
+
+
+>>>work_type
+Never_worked       22
+Govt_job          657
+children          687
+Self-employed     819
+Private          2925
+Name: count, dtype: int64
+\end{lstlisting}
+	
+\end{frame}
+
+
+\begin{frame}[fragile]
+	\frametitle{A quick look at categorical attributes}
+	\begin{lstlisting}
+>>>ever_married
+No     1757
+Yes    3353
+Name: count, dtype: int64
+	
+>>>Residence_type
+Rural    2514
+Urban    2596
+Name: count, dtype: int64
+	
+>>>smoking_status
+smokes              789
+formerly smoked     885
+Unknown            1544
+never smoked       1892
+Name: count, dtype: int64
+	
+	\end{lstlisting}
+	
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+	\frametitle{A quick look at numerical attributes}
+\begin{lstlisting}
+stroke_data.hist(bins=50, figsize=(12, 8))	\end{lstlisting}
+	
+	\begin{figure}[h]
+		\caption{Histrogram of numerical attributes }
+		\centering
+		\includegraphics[width=0.7\textwidth]{hist1.png}
+	\end{figure}
+	
+\end{frame}
+
+
+
+
+\section{Preparing data}
+\subsection{Clean data}
+
+\begin{frame}[fragile]
+	\frametitle{Preparing data}
+After looking at the data, we decide to separate them into the $3$ groups 
+		\begin{lstlisting}
+num_attribs = ["age"]
+cat_attribs = ["gender", "ever_married", "work_type", "Residence_type", 
+	"smoking_status", "hypertension", "heart_disease"]
+log_attribs = ["avg_glucose_level", "bmi"]
+		\end{lstlisting}
+\end{frame}
+
+\subsubsection{Missing data}
+\begin{frame}[fragile]
+	\frametitle{Missing data }
+We have two options to deal with missing data:
+\begin{itemize}
+	\item Get rid of the whole attribute.
+	\item  Set the missing values to some value (zero, the mean, the median, etc.). This is called imputation.
+\end{itemize}
+
+we suspect that "bmi" mat affect the risk of getting strokes. Thus, we decide to imputate the data.
+We use the function SimpleImputer as below.
+	\begin{lstlisting}
+from sklearn.impute import SimpleImputer 
+	\end{lstlisting}
+There are several ways to impute the data. For example,
+
+\begin{lstlisting}
+SimpleImputer(strategy='median')
+SimpleImputer(strategy="most_frequent")
+\end{lstlisting} 
+\end{frame}
+\subsubsection{Feature scaling}
+\begin{frame}\frametitle{Feature scaling}
+	One of the most important transformations is \textit{scaling}. The models do not perform well then the input have very different scales. 
+	
+	For example, the age attribute is between 0 and 100 while avg\_glucose\_level is above 200.
+	In Scikit-Learn, there are two basic transformers called MinMaxScaler and StandardScaler.
+	
+	\begin{itemize}
+		\item MinMaxScaler: This is performed by subtracting the min value and dividing by the difference between the min and the max.
+		
+		\item StandardScaler: It subtracts the mean value and divides the result by the standard deviation.
+	\end{itemize}
+\end{frame}
+
+\subsubsection{Encoding}
+\begin{frame}\frametitle{Encoding}
+	In categorical attribute, each text represents a category. We can choose a function to use from Scikit-Learn package. There are many encoders supported in the package such as OrdinalEncoder, OneHotEncoder.
+\end{frame}
+
+\subsection{Transformation pipeline}
+\begin{frame}
+	\centering Transformation pipelines
+\end{frame}
+\subsubsection{Numerical attributes}
+\begin{frame}[fragile]
+	\frametitle{Numerical attributes}
+\begin{lstlisting}
+num_pipeline = make_pipeline(SimpleImputer(strategy="median"), StandardScaler())
+\end{lstlisting}
+\end{frame}
+\subsubsection{Numerical attributes with long-tail}
+\begin{frame}[fragile]
+	\frametitle{Long-tail attributes}
+	\begin{figure}[h]
+		\caption{Long-tail attributes}
+		\includegraphics[width=0.6\textwidth]{log.png}
+	\end{figure}
+	\begin{lstlisting}
+		from sklearn.preprocessing import FunctionTransformer
+		log_pipeline = make_pipeline(
+		SimpleImputer(strategy="median"),
+		FunctionTransformer(np.log, feature_names_out="one-to-one"),
+		StandardScaler())		
+	\end{lstlisting}
+\end{frame}
+
+\subsubsection{Categorical attributes}
+\begin{frame}[fragile]
+	\frametitle{Categorical attributes}
+
+\begin{lstlisting}
+cat_pipeline = make_pipeline(SimpleImputer(strategy="most_frequent"), OneHotEncoder(handle_unknown="ignore"))
+\end{lstlisting}
+\end{frame}
+
+
+
+
+\section{Create test and training sets}
+\begingroup
+\footnotesize
+\begin{frame}[fragile]
+\frametitle{Create training set and test set}
+We can split the data randomly or based on a certain category. I suspect that each age group has a certain risk, and hence I split the data based on age groups.
+\begin{lstlisting}
+stroke_data["age_groups"] = pd.cut(stroke_data["age"],
+bins=[0., 20, 30, 40, 50, 60, 70, np.inf],
+labels=["0-20", "21-30", "31-40", "41-50", "51-60", "61-70", ">70"])
+stroke_data["age_groups"].value_counts().sort_index().plot.bar(rot=0, grid=True)
+\end{lstlisting}
+
+		\begin{figure}[h]
+	%\caption{Long-tail attributes}
+	\includegraphics[width=0.6\textwidth]{agegroup.png}
+\end{figure}
+\end{frame}
+\endgroup 
+
+\begin{frame}
+	\centering Create test and training sets
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Create test and training sets}
+
+\begin{lstlisting}
+from sklearn.model_selection import train_test_split
+x_train, x_test, y_train, y_test = train_test_split(
+stroke_data, stroke_data["stroke"], test_size=0.20, stratify=stroke_data['age_groups'], random_state=42)
+\end{lstlisting}
+	
+	Let’s see if this worked as expected. Let's look at the income
+	category proportions in the test set:
+	
+\begin{lstlisting}
+	x_train['age_groups'].value_counts() / len(x_train)
+	>>>age_groups
+	0-20     0.200587
+	51-60    0.161204
+	41-50    0.144569
+	>70      0.138943
+	31-40    0.131849
+	61-70    0.116194
+	21-30    0.106654
+	Name: count, dtype: float64
+\end{lstlisting}
+\end{frame}
+
+
+\begin{frame}
+	\begin{wrapfigure}{l}{0.5\textwidth}
+		\includegraphics[width=0.4\textwidth]{stroke.png}
+	\end{wrapfigure}
+	
+Notice that we are dealing with imbalanced datasets. The models may have poor performance on the minority class (that had a stroke). We can use Synthetic Minority Over-sampling Technique (SMOTE) in Imbalanced-learn package.
+\end{frame}
+
+
+\begin{frame}[fragile]
+
+\begin{lstlisting}
+	from imblearn.over_sampling import SMOTE
+	sm = SMOTE(random_state=2)
+	x_train_smote, y_train_smote = sm.fit_resample(x_train, y_train.ravel())
+\end{lstlisting}
+
+\end{frame}
+
+\section{Some classification models}
+\begin{frame}
+\frametitle{Classification models}
+
+Here are some models included in Scikit-learn
+
+\begin{itemize}
+	\item LogisticRegression
+	
+	\item DecisionTreeRegressor
+	
+	\item  RandomForestClassifier
+	
+	\item SVC
+	
+	\item SVM with Poly Kernel
+	
+	\item SVM with Gaussian RBF Kernel
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{measure}
+	\begin{lstlisting}
+from sklearn.metrics import accuracy_score
+accuracy_score(y_test, y_pred)
+
+from sklearn.model_selection import cross_val_score
+cross_val_score(estimator = NAME_OF_MODELS, X = x_train_smote, y = y_train_smote, cv = 3) 
+	\end{lstlisting}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Compare accuracy of models}
+	
+	\begin{center}
+		\begin{tabular}{ | c | c| c | } 
+				\hline
+			& Accuracy score & K-fold cross-validation \\ 
+			\hline
+		LogisticRegression & $95.79 \%$ & $96.20 \%$ \\ 
+			\hline
+	%	DecisionTreeRegressor & $9080 \% $ & cell6 \\ 
+	%		\hline
+			RandomForestClassifier & $95.11 \%$ & $96.92 \%$ \\ 
+			\hline
+			SVC & $95.69 \%$ & $94.99 \%$ \\ 
+		\hline
+			SVM with Poly Kernel & $95.69 \%$ & $96.50 \%$  \\ 
+		\hline
+			SVM with Gaussian RBF Kernel & $91.88 \%$ & $94.59 \%$  \\ 
+		\hline
+		\end{tabular}
+	\end{center}
+	
+\end{frame}
+
+
 
 \end{document}
