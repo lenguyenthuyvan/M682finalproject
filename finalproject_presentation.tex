@@ -215,9 +215,9 @@
 	\end{itemize}
 }
 
-\section{Explore and visualize the data go gain insights}
+\section{Explore and visualize the data to gain insights}
 \begin{frame}
-	\centering Explore and visualize the data go gain insights
+	\centering Explore and visualize the data to gain insights
 \end{frame}
 
 \begin{frame}[fragile]
@@ -317,8 +317,62 @@ stroke_data.hist(bins=50, figsize=(12, 8))	\end{lstlisting}
 
 
 
+\section{Create test and training sets}
+
+\begin{frame}
+	\centering Create test and training sets
+\end{frame}
+\begingroup
+\footnotesize
+\begin{frame}[fragile]
+	\frametitle{Create training set and test set}
+	We can split the data randomly or based on a certain category. I suspect that each age group has a certain risk, and hence I split the data based on age groups.
+	\begin{lstlisting}
+		stroke_data["age_groups"] = pd.cut(stroke_data["age"],
+		bins=[0., 20, 30, 40, 50, 60, 70, np.inf],
+		labels=["0-20", "21-30", "31-40", "41-50", "51-60", "61-70", ">70"])
+		stroke_data["age_groups"].value_counts().sort_index().plot.bar(rot=0, grid=True)
+	\end{lstlisting}
+	
+	\begin{figure}[h]
+		%\caption{Long-tail attributes}
+		\includegraphics[width=0.6\textwidth]{agegroup.png}
+	\end{figure}
+\end{frame}
+\endgroup 
+
+
+\begin{frame}[fragile]
+	\frametitle{Create test and training sets}
+	
+	\begin{lstlisting}
+		from sklearn.model_selection import train_test_split
+		x_train, x_test, y_train, y_test = train_test_split(
+		stroke_data, stroke_data["stroke"], test_size=0.20, stratify=stroke_data['age_groups'], random_state=42)
+	\end{lstlisting}
+	
+	Let’s see if this worked as expected. Let's look at the income
+	category proportions in the test set:
+	
+	\begin{lstlisting}
+		x_train['age_groups'].value_counts() / len(x_train)
+		>>>age_groups
+		0-20     0.200587
+		51-60    0.161204
+		41-50    0.144569
+		>70      0.138943
+		31-40    0.131849
+		61-70    0.116194
+		21-30    0.106654
+		Name: count, dtype: float64
+	\end{lstlisting}
+\end{frame}
 
 \section{Preparing data}
+
+\begin{frame}
+	\centering Preparing data
+\end{frame}
 \subsection{Clean data}
 
 \begin{frame}[fragile]
@@ -411,58 +465,10 @@ cat_pipeline = make_pipeline(SimpleImputer(strategy="most_frequent"), OneHotEnco
 
 
 
-\section{Create test and training sets}
-\begingroup
-\footnotesize
-\begin{frame}[fragile]
-\frametitle{Create training set and test set}
-We can split the data randomly or based on a certain category. I suspect that each age group has a certain risk, and hence I split the data based on age groups.
-\begin{lstlisting}
-stroke_data["age_groups"] = pd.cut(stroke_data["age"],
-bins=[0., 20, 30, 40, 50, 60, 70, np.inf],
-labels=["0-20", "21-30", "31-40", "41-50", "51-60", "61-70", ">70"])
-stroke_data["age_groups"].value_counts().sort_index().plot.bar(rot=0, grid=True)
-\end{lstlisting}
-
-		\begin{figure}[h]
-	%\caption{Long-tail attributes}
-	\includegraphics[width=0.6\textwidth]{agegroup.png}
-\end{figure}
-\end{frame}
-\endgroup 
-
-\begin{frame}
-	\centering Create test and training sets
-\end{frame}
-
-\begin{frame}[fragile]
-	\frametitle{Create test and training sets}
-
-\begin{lstlisting}
-from sklearn.model_selection import train_test_split
-x_train, x_test, y_train, y_test = train_test_split(
-stroke_data, stroke_data["stroke"], test_size=0.20, stratify=stroke_data['age_groups'], random_state=42)
-\end{lstlisting}
-	
-	Let’s see if this worked as expected. Let's look at the income
-	category proportions in the test set:
-	
-\begin{lstlisting}
-	x_train['age_groups'].value_counts() / len(x_train)
-	>>>age_groups
-	0-20     0.200587
-	51-60    0.161204
-	41-50    0.144569
-	>70      0.138943
-	31-40    0.131849
-	61-70    0.116194
-	21-30    0.106654
-	Name: count, dtype: float64
-\end{lstlisting}
-\end{frame}
 
 
 \begin{frame}
+	\frametitle{Imbalanced data}
 	\begin{wrapfigure}{l}{0.5\textwidth}
 		\includegraphics[width=0.4\textwidth]{stroke.png}
 	\end{wrapfigure}
@@ -492,7 +498,7 @@ Here are some models included in Scikit-learn
 	
 	\item DecisionTreeRegressor
 	
-	\item  RandomForestClassifier
+	\item RandomForestClassifier
 	
 	\item SVC
 	
@@ -503,7 +509,7 @@ Here are some models included in Scikit-learn
 \end{frame}
 
 \begin{frame}[fragile]
-	\frametitle{measure}
+	\frametitle{Accuracy measure}
 	\begin{lstlisting}
 from sklearn.metrics import accuracy_score
 accuracy_score(y_test, y_pred)
@@ -513,28 +519,55 @@ cross_val_score(estimator = NAME_OF_MODELS, X = x_train_smote, y = y_train_smote
 	\end{lstlisting}
 \end{frame}
 
+
+
 \begin{frame}
 	\frametitle{Compare accuracy of models}
-	
-	\begin{center}
+	Data is cleaned in the pipelines:
+		\begin{center}
 		\begin{tabular}{ | c | c| c | } 
-				\hline
+			\hline
 			& Accuracy score & K-fold cross-validation \\ 
 			\hline
-		LogisticRegression & $95.79 \%$ & $96.20 \%$ \\ 
+			LogisticRegression & $83.37 \%$ & $82.41 \%$ \\ 
 			\hline
-	%	DecisionTreeRegressor & $9080 \% $ & cell6 \\ 
-	%		\hline
+			%	DecisionTreeRegressor & $9080 \% $ & cell6 \\ 
+			%		\hline
+			RandomForestClassifier & $91.59 \%$ & $93.82 \%$ \\ 
+			\hline
+			SVC & $84.76 \%$ & $87.91 \%$ \\ 
+			\hline
+			SVM with Poly Kernel & $85.03 \%$ & $88.41 \%$  \\ 
+			\hline
+			SVM with Gaussian RBF Kernel & $86.59 \%$ & $90.95 \%$  \\ 
+			\hline
+		\end{tabular}
+	\end{center}
+	Data is cleaned before and in the pipelines:
+		\begin{center}
+		\begin{tabular}{ | c | c| c | } 
+			\hline
+			& Accuracy score & K-fold cross-validation \\ 
+			\hline
+			LogisticRegression & $95.79 \%$ & $96.20 \%$ \\ 
+			\hline
+			%	DecisionTreeRegressor & $9080 \% $ & cell6 \\ 
+			%		\hline
 			RandomForestClassifier & $95.11 \%$ & $96.92 \%$ \\ 
 			\hline
 			SVC & $95.69 \%$ & $94.99 \%$ \\ 
-		\hline
+			\hline
 			SVM with Poly Kernel & $95.69 \%$ & $96.50 \%$  \\ 
-		\hline
+			\hline
 			SVM with Gaussian RBF Kernel & $91.88 \%$ & $94.59 \%$  \\ 
-		\hline
+			\hline
 		\end{tabular}
 	\end{center}
+
+\end{frame}
+
+
+\begin{frame}
 	
 \end{frame}
 
