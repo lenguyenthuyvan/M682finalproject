@@ -210,28 +210,30 @@
 \begin{itemize}
 	\item Learn to use Scikit-Learn.
 	
-	\item Predict whether a patient is likely to get a stroke based on inputs such as gender, age, various diseases and smoking status.
+	\item Use some classification models to predict whether a patient is likely to get a stroke based on inputs such as gender, age, various diseases and smoking status.
 	
 	\end{itemize}
 }
 
 \section{Explore and visualize the data to gain insights}
 \begin{frame}
-	\centering Explore and visualize the data to gain insights
+	\centering \large Explore and visualize the data to gain insights
 \end{frame}
 
 \begin{frame}[fragile]
 	\frametitle{Downloading data}
 \begin{lstlisting}
-	stroke_data = pd.read_csv(Path("healthcare-dataset-stroke-data.csv")) 
+	stroke_data = pd.read_csv(Path("healthcare-dataset-stroke-data.csv"))
 	stroke_data.head(10)
 \end{lstlisting}
 
 \begin{figure}[h]
-	\caption{Stroke prediction dataset}
+	\caption{Stroke prediction dataset\footnote{Source: https://www.kaggle.com/datasets/fedesoriano/stroke-prediction-dataset}}
 	\centering
 	\includegraphics[width=1.0\textwidth]{head.png}
 \end{figure}
+
+
 
 \end{frame}
 
@@ -320,7 +322,7 @@ stroke_data.hist(bins=50, figsize=(12, 8))	\end{lstlisting}
 \section{Create test and training sets}
 
 \begin{frame}
-	\centering Create test and training sets
+	\centering\large Create test and training sets
 \end{frame}
 \begingroup
 \footnotesize
@@ -347,11 +349,12 @@ stroke_data.hist(bins=50, figsize=(12, 8))	\end{lstlisting}
 	
 	\begin{lstlisting}
 		from sklearn.model_selection import train_test_split
-		x_train, x_test, y_train, y_test = train_test_split(
+		x_train_set, x_test, y_train, y_test = train_test_split(
 		stroke_data, stroke_data["stroke"], test_size=0.20, stratify=stroke_data['age_groups'], random_state=42)
+		x_train = x_train_set.copy()
 	\end{lstlisting}
 	
-	Let’s see if this worked as expected. Let's look at the income
+	Let’s see if this worked as expected. Let's look at the
 	category proportions in the test set:
 	
 	\begin{lstlisting}
@@ -371,12 +374,22 @@ stroke_data.hist(bins=50, figsize=(12, 8))	\end{lstlisting}
 \section{Preparing data}
 
 \begin{frame}
-	\centering Preparing data
+	\centering \large Preparing data
 \end{frame}
 \subsection{Clean data}
 
 \begin{frame}[fragile]
 	\frametitle{Preparing data}
+
+		
+		\begin{figure}[h]
+			\caption{Histrogram of numerical attributes }
+			\centering
+			\includegraphics[width=0.5\textwidth]{hist1.png}
+		\end{figure}
+		
+
+	
 After looking at the data, we decide to separate them into the $3$ groups 
 		\begin{lstlisting}
 num_attribs = ["age"]
@@ -395,11 +408,11 @@ We have two options to deal with missing data:
 	\item  Set the missing values to some value (zero, the mean, the median, etc.). This is called imputation.
 \end{itemize}
 
-we suspect that "bmi" mat affect the risk of getting strokes. Thus, we decide to imputate the data.
+We suspect that "bmi" may affect the risk of getting strokes. Thus, we decide to imputate the data.
 We use the function SimpleImputer as below.
-	\begin{lstlisting}
+\begin{lstlisting}
 from sklearn.impute import SimpleImputer 
-	\end{lstlisting}
+\end{lstlisting}
 There are several ways to impute the data. For example,
 
 \begin{lstlisting}
@@ -424,16 +437,23 @@ SimpleImputer(strategy="most_frequent")
 \subsubsection{Encoding}
 \begin{frame}\frametitle{Encoding}
 	In categorical attribute, each text represents a category. We can choose a function to use from Scikit-Learn package. There are many encoders supported in the package such as OrdinalEncoder, OneHotEncoder.
+	
+	\begin{itemize}
+		\item OrdinalEncoder: Label the groups as $0,1,2,3...$
+		\item  OneHotEncoder: Create a binary attribute, $1$ for a category and $0$ otherwise. 
+	\end{itemize}
 \end{frame}
 
 \subsection{Transformation pipeline}
 \begin{frame}
-	\centering Transformation pipelines
+	\centering \large Transformation pipelines
 \end{frame}
 \subsubsection{Numerical attributes}
 \begin{frame}[fragile]
 	\frametitle{Numerical attributes}
+Now we are ready to make a pipeline for numerical attributes.
 \begin{lstlisting}
+from sklearn.pipeline import make_pipeline
 num_pipeline = make_pipeline(SimpleImputer(strategy="median"), StandardScaler())
 \end{lstlisting}
 \end{frame}
@@ -456,7 +476,7 @@ num_pipeline = make_pipeline(SimpleImputer(strategy="median"), StandardScaler())
 \subsubsection{Categorical attributes}
 \begin{frame}[fragile]
 	\frametitle{Categorical attributes}
-
+A pipeline for categorical attributes.
 \begin{lstlisting}
 cat_pipeline = make_pipeline(SimpleImputer(strategy="most_frequent"), OneHotEncoder(handle_unknown="ignore"))
 \end{lstlisting}
@@ -478,7 +498,14 @@ Notice that we are dealing with imbalanced datasets. The models may have poor pe
 
 
 \begin{frame}[fragile]
+	
+$\bullet$ How does SMOTE work?\\
 
+Selecting examples that are close in the feature space, drawing a line between the examples in the feature space and drawing a new sample at a point along that line. 
+
+$\bullet$ Pros: Enhance generalization, reduce over-fitting
+
+$\bullet$ Cons: Samples are created without considering the majority class, possibly resulting in ambiguous examples if there is a strong overlap for the classes.
 \begin{lstlisting}
 	from imblearn.over_sampling import SMOTE
 	sm = SMOTE(random_state=2)
@@ -510,6 +537,10 @@ Here are some models included in Scikit-learn
 
 \begin{frame}[fragile]
 	\frametitle{Accuracy measure}
+	
+	$\bullet$ Accuracy score: $\frac{\text{Correct Predictions}}{\text{Total Predictions}}$
+	
+	$\bullet$ Cross validation: divide the data into $k$-subsets, the model is trained and evaluated $k$-times. The result is the average of $k$ validations.
 	\begin{lstlisting}
 from sklearn.metrics import accuracy_score
 accuracy_score(y_test, y_pred)
@@ -568,7 +599,7 @@ cross_val_score(estimator = NAME_OF_MODELS, X = x_train_smote, y = y_train_smote
 
 
 \begin{frame}
-	
+	\centering \large Thank you for listening!
 \end{frame}
 
 
